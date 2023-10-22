@@ -1,1 +1,2 @@
 # ConcurrentWebScraper
+This Python program, ConcurrentWebScraper, is a multi-threaded web scraping tool that allows you to concurrently scrape data from a list of URLs. It uses concurrent threads to fetch web content, parse HTML, and extract information like page titles and paragraphs. The program is designed for efficiency and can help you scrape data from multiple websites simultaneously. Please use this program responsibly and ensure compliance with website terms of service and legal requirements.
