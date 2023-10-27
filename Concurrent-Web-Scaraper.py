@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
-import concurrent.futures
+from concurrent.futures import ThreadPoolExecutor
+import threading
 
 # List of URLs to scrape
 urls = ['https://example.com', 'https://example.org', 'https://example.net']
@@ -18,14 +19,27 @@ def scrape_url(url):
         title = soup.title.string
         paragraph = soup.find('p').get_text()
 
-        # Print the results
-        print(f"URL: {url}\nTitle: {title}\nParagraph: {paragraph}\n")
+        # Save the results to a file
+        with open(f"{url.replace('https://', '').replace('.', '_')}.txt", 'w') as file:
+            file.write(f"URL: {url}\nTitle: {title}\nParagraph: {paragraph}\n")
+
+        print(f"Scraped {url}")
 
     except requests.exceptions.RequestException as e:
         print(f"Failed to scrape {url}: {e}")
 
-# Use a ThreadPoolExecutor to concurrently scrape the URLs
-with concurrent.futures.ThreadPoolExecutor() as executor:
-    executor.map(scrape_url, urls)
+def main():
+    num_threads = 3  # Number of concurrent threads
+    with ThreadPoolExecutor(max_workers=num_threads) as executor:
+        futures = {executor.submit(scrape_url, url): url for url in urls}
 
-print("Scraping completed.")
+    for future in concurrent.futures.as_completed(futures):
+        url = futures[future]
+        try:
+            future.result()
+        except Exception as e:
+            print(f"Error scraping {url}: {e}")
+
+if __name__ == "__main__":
+    main()
+    print("Scraping completed.")
